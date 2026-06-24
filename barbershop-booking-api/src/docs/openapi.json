@@ -1,0 +1,3784 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Barbershop Booking API",
+    "version": "1.1.0",
+    "description": "Backend API for barbershop booking."
+  },
+  "servers": [
+    {
+      "url": "https://test-4p5l.onrender.com"
+    },
+    {
+      "url": "http://localhost:4000"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "HealthResponse": {
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          }
+        }
+      },
+      "ReadyResponse": {
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ready"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      },
+      "ValidationErrorResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ErrorResponse"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "details": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "RegisterRequest": {
+        "type": "object",
+        "required": [
+          "fullName",
+          "phone",
+          "password"
+        ],
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 120
+          },
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+996\\d{9}$"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 20,
+            "pattern": "^[A-Za-z0-9]+$"
+          }
+        }
+      },
+      "UserPublic": {
+        "type": "object",
+        "required": [
+          "id",
+          "fullName",
+          "phone"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+996\\d{9}$"
+          }
+        }
+      },
+      "UserPublicSnake": {
+        "type": "object",
+        "required": [
+          "id",
+          "full_name",
+          "phone",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "full_name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+996\\d{9}$"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "RegisterResponse": {
+        "type": "object",
+        "required": [
+          "user"
+        ],
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/UserPublicSnake"
+          }
+        }
+      },
+      "UserLoginRequest": {
+        "type": "object",
+        "required": [
+          "phone",
+          "password"
+        ],
+        "properties": {
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+996\\d{9}$"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "UserLoginResponse": {
+        "type": "object",
+        "required": [
+          "token",
+          "user"
+        ],
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserPublic"
+          }
+        }
+      },
+      "AdminLoginRequest": {
+        "type": "object",
+        "required": [
+          "phone",
+          "password"
+        ],
+        "properties": {
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+996\\d{9}$"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "AdminPublic": {
+        "type": "object",
+        "required": [
+          "id",
+          "full_name",
+          "phone"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "full_name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+996\\d{9}$"
+          }
+        }
+      },
+      "AdminLoginResponse": {
+        "type": "object",
+        "required": [
+          "token",
+          "admin"
+        ],
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "admin": {
+            "$ref": "#/components/schemas/AdminPublic"
+          }
+        }
+      },
+      "Barber": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "role",
+          "experience_years",
+          "rating",
+          "reviews_count",
+          "is_available",
+          "specialties",
+          "salon_id",
+          "salon",
+          "is_active",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "experience_years": {
+            "type": "integer"
+          },
+          "rating": {
+            "type": "number"
+          },
+          "reviews_count": {
+            "type": "integer"
+          },
+          "image_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "is_available": {
+            "type": "boolean"
+          },
+          "specialties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "salon_id": {
+            "type": "integer"
+          },
+          "salon": {
+            "$ref": "#/components/schemas/Salon"
+          },
+          "bio": {
+            "type": "string",
+            "nullable": true
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Service": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "duration_minutes",
+          "price"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "duration_minutes": {
+            "type": "integer"
+          },
+          "price": {
+            "type": "string",
+            "example": "500.00"
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "description",
+          "price",
+          "category",
+          "type",
+          "stock_qty"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "price": {
+            "type": "string",
+            "example": "650.00"
+          },
+          "image_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "men",
+              "women",
+              "unisex"
+            ]
+          },
+          "type": {
+            "type": "string"
+          },
+          "stock_qty": {
+            "type": "integer"
+          }
+        }
+      },
+      "Slot": {
+        "type": "object",
+        "required": [
+          "id",
+          "barber_id",
+          "date",
+          "time"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "barber_id": {
+            "type": "integer"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "time": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "booked",
+              "blocked"
+            ]
+          }
+        }
+      },
+      "BookingRequest": {
+        "type": "object",
+        "required": [
+          "serviceId",
+          "barberId",
+          "date",
+          "time"
+        ],
+        "properties": {
+          "serviceId": {
+            "type": "integer"
+          },
+          "barberId": {
+            "type": "integer"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "time": {
+            "type": "string",
+            "example": "10:30"
+          }
+        }
+      },
+      "BookingCreatedResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AdminBooking": {
+        "type": "object",
+        "required": [
+          "id",
+          "client_name",
+          "client_phone",
+          "date",
+          "time",
+          "service_name",
+          "barber_name"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "client_name": {
+            "type": "string"
+          },
+          "client_phone": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "time": {
+            "type": "string"
+          },
+          "service_name": {
+            "type": "string"
+          },
+          "barber_name": {
+            "type": "string"
+          }
+        }
+      },
+      "AdminUsersResponse": {
+        "type": "object",
+        "required": [
+          "items",
+          "limit",
+          "offset"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "full_name",
+                "phone",
+                "created_at"
+              ],
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "full_name": {
+                  "type": "string"
+                },
+                "phone": {
+                  "type": "string",
+                  "pattern": "^\\+996\\d{9}$"
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          }
+        }
+      },
+      "AdminObject": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "AdminListAnyResponse": {
+        "type": "object",
+        "required": [
+          "items",
+          "limit",
+          "offset"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminObject"
+            }
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          }
+        }
+      },
+      "AdminDeleteResponse": {
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "deleted"
+          }
+        }
+      },
+      "SlotCreateRequest": {
+        "type": "object",
+        "required": [
+          "barberId",
+          "date",
+          "times"
+        ],
+        "properties": {
+          "barberId": {
+            "type": "integer"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "times": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "10:00"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "blocked"
+            ]
+          }
+        }
+      },
+      "SlotCreateResponse": {
+        "type": "object",
+        "required": [
+          "created",
+          "skipped"
+        ],
+        "properties": {
+          "created": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "time",
+                "status"
+              ],
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "time": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "available",
+                    "booked",
+                    "blocked"
+                  ]
+                }
+              }
+            }
+          },
+          "skipped": {
+            "type": "integer"
+          }
+        }
+      },
+      "Review": {
+        "type": "object",
+        "required": [
+          "id",
+          "barber_id",
+          "author_name",
+          "rating",
+          "comment",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "barber_id": {
+            "type": "integer"
+          },
+          "author_name": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "number"
+          },
+          "comment": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ReviewCreateRequest": {
+        "type": "object",
+        "required": [
+          "rating",
+          "comment"
+        ],
+        "properties": {
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "comment": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 100
+          }
+        }
+      },
+      "ReviewCreateResponse": {
+        "type": "object",
+        "required": [
+          "review",
+          "barber"
+        ],
+        "properties": {
+          "review": {
+            "$ref": "#/components/schemas/Review"
+          },
+          "barber": {
+            "type": "object",
+            "required": [
+              "id",
+              "rating",
+              "reviews_count"
+            ],
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "rating": {
+                "type": "number"
+              },
+              "reviews_count": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      },
+      "MyBooking": {
+        "type": "object",
+        "required": [
+          "id",
+          "service_id",
+          "service_name",
+          "service_price",
+          "barber_id",
+          "barber_name",
+          "salon_id",
+          "salon_name",
+          "salon_address",
+          "date",
+          "time",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "service_id": {
+            "type": "integer"
+          },
+          "service_name": {
+            "type": "string"
+          },
+          "service_price": {
+            "type": "string",
+            "example": "500.00"
+          },
+          "barber_id": {
+            "type": "integer"
+          },
+          "barber_name": {
+            "type": "string"
+          },
+          "salon_id": {
+            "type": "integer"
+          },
+          "salon_name": {
+            "type": "string"
+          },
+          "salon_address": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "time": {
+            "type": "string",
+            "example": "10:30:00"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "BookingCancelResponse": {
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "cancelled"
+          }
+        }
+      },
+      "UserProfileUpdateRequest": {
+        "type": "object",
+        "minProperties": 1,
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 120
+          },
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+996\\d{9}$"
+          }
+        }
+      },
+      "UserProfileUpdateResponse": {
+        "type": "object",
+        "required": [
+          "user"
+        ],
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/UserPublicSnake"
+          }
+        }
+      },
+      "Salon": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "work_hours": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "sort_order": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "address",
+          "work_hours",
+          "latitude",
+          "longitude",
+          "is_active",
+          "sort_order",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "UserPasswordUpdateRequest": {
+        "type": "object",
+        "required": [
+          "currentPassword",
+          "newPassword"
+        ],
+        "properties": {
+          "currentPassword": {
+            "type": "string",
+            "minLength": 1
+          },
+          "newPassword": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 20,
+            "pattern": "^[A-Za-z0-9]+$"
+          }
+        }
+      },
+      "UserPasswordUpdateResponse": {
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "password_updated"
+            ]
+          }
+        }
+      },
+      "CartItem": {
+        "type": "object",
+        "required": [
+          "product_id",
+          "quantity",
+          "name",
+          "price",
+          "image_url"
+        ],
+        "properties": {
+          "product_id": {
+            "type": "integer"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "name": {
+            "type": "string"
+          },
+          "price": {
+            "type": "string"
+          },
+          "image_url": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CartResponse": {
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartItem"
+            }
+          }
+        }
+      },
+      "CartItemUpsertRequest": {
+        "type": "object",
+        "required": [
+          "quantity"
+        ],
+        "properties": {
+          "quantity": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "CartStatusResponse": {
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "updated",
+              "removed",
+              "cleared"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Liveness probe",
+        "operationId": "getHealth",
+        "responses": {
+          "200": {
+            "description": "Process is alive",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ready": {
+      "get": {
+        "summary": "Readiness probe",
+        "operationId": "getReady",
+        "responses": {
+          "200": {
+            "description": "Dependencies are ready",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadyResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/barbers": {
+      "get": {
+        "summary": "List active barbers",
+        "operationId": "getBarbers",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "salonId",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Filter barbers by salon id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Barber"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/services": {
+      "get": {
+        "summary": "List active services",
+        "operationId": "getServices",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Service"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products": {
+      "get": {
+        "summary": "List active shop products",
+        "operationId": "getProducts",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "men",
+                "women",
+                "unisex"
+              ]
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/slots": {
+      "get": {
+        "summary": "List slots",
+        "operationId": "getSlots",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "barberId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "available",
+                "booked",
+                "blocked"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Slot"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "summary": "Register user",
+        "operationId": "registerUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Login user",
+        "operationId": "loginUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserLoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bookings": {
+      "post": {
+        "summary": "Create booking",
+        "operationId": "createBooking",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookingRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingCreatedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict: slot is unavailable or active booking limit is reached",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "slotUnavailable": {
+                    "summary": "Selected slot is already booked",
+                    "value": {
+                      "error": "Selected time slot is not available"
+                    }
+                  },
+                  "activeBookingLimit": {
+                    "summary": "User has reached maximum active bookings",
+                    "value": {
+                      "error": "Maximum 2 active bookings per user reached"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/login": {
+      "post": {
+        "summary": "Admin login",
+        "operationId": "loginAdmin",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminLoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminLoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many admin login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/admins": {
+      "get": {
+        "summary": "List admins",
+        "operationId": "listAdmins",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminListAnyResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create admin",
+        "operationId": "createAdmin",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/admins/{id}": {
+      "get": {
+        "summary": "Get admin by id",
+        "operationId": "getAdminById",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update admin",
+        "operationId": "updateAdmin",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete admin",
+        "operationId": "deleteAdmin",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminDeleteResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/users": {
+      "get": {
+        "summary": "List users",
+        "operationId": "getAdminUsers",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUsersResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create user",
+        "operationId": "createAdminUser",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/users/{id}": {
+      "get": {
+        "summary": "Get user by id",
+        "operationId": "getAdminUserById",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update user",
+        "operationId": "updateAdminUser",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete user",
+        "operationId": "deleteAdminUser",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminDeleteResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/salons": {
+      "get": {
+        "summary": "List salons",
+        "operationId": "listAdminSalons",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminObject"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create salon",
+        "operationId": "createAdminSalon",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/salons/{id}": {
+      "get": {
+        "summary": "Get salon by id",
+        "operationId": "getAdminSalonById",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update salon",
+        "operationId": "updateAdminSalon",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete salon",
+        "operationId": "deleteAdminSalon",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminDeleteResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/barbers": {
+      "get": {
+        "summary": "List barbers",
+        "operationId": "listAdminBarbers",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminObject"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create barber",
+        "operationId": "createAdminBarber",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/barbers/{id}": {
+      "get": {
+        "summary": "Get barber by id",
+        "operationId": "getAdminBarberById",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update barber",
+        "operationId": "updateAdminBarber",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete barber",
+        "operationId": "deleteAdminBarber",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminDeleteResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/services": {
+      "get": {
+        "summary": "List services",
+        "operationId": "listAdminServices",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminObject"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create service",
+        "operationId": "createAdminService",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/services/{id}": {
+      "get": {
+        "summary": "Get service by id",
+        "operationId": "getAdminServiceById",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update service",
+        "operationId": "updateAdminService",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete service",
+        "operationId": "deleteAdminService",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminDeleteResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/products": {
+      "get": {
+        "summary": "List products",
+        "operationId": "listAdminProducts",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminObject"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create product",
+        "operationId": "createAdminProduct",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/products/{id}": {
+      "get": {
+        "summary": "Get product by id",
+        "operationId": "getAdminProductById",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update product",
+        "operationId": "updateAdminProduct",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete product",
+        "operationId": "deleteAdminProduct",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminDeleteResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/slots": {
+      "get": {
+        "summary": "List slots",
+        "operationId": "getAdminSlots",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "barberId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "available",
+                "booked",
+                "blocked"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminListAnyResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create slots",
+        "operationId": "createAdminSlots",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SlotCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/slots/{id}": {
+      "get": {
+        "summary": "Get slot by id",
+        "operationId": "getAdminSlotById",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update slot",
+        "operationId": "updateAdminSlot",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete slot",
+        "operationId": "deleteAdminSlot",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminDeleteResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/bookings": {
+      "get": {
+        "summary": "List bookings",
+        "operationId": "getAdminBookings",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "barberId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminListAnyResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create booking",
+        "operationId": "createAdminBooking",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/bookings/{id}": {
+      "get": {
+        "summary": "Get booking by id",
+        "operationId": "getAdminBookingById",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update booking",
+        "operationId": "updateAdminBooking",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete booking",
+        "operationId": "deleteAdminBooking",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminDeleteResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/reviews": {
+      "get": {
+        "summary": "List reviews",
+        "operationId": "listAdminReviews",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminListAnyResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create review",
+        "operationId": "createAdminReview",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/reviews/{id}": {
+      "get": {
+        "summary": "Get review by id",
+        "operationId": "getAdminReviewById",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update review",
+        "operationId": "updateAdminReview",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete review",
+        "operationId": "deleteAdminReview",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminDeleteResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/cart-items": {
+      "get": {
+        "summary": "List cart items",
+        "operationId": "listAdminCartItems",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminListAnyResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create cart item",
+        "operationId": "createAdminCartItem",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/cart-items/{userId}/{productId}": {
+      "get": {
+        "summary": "Get cart item",
+        "operationId": "getAdminCartItem",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update cart item",
+        "operationId": "updateAdminCartItem",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete cart item",
+        "operationId": "deleteAdminCartItem",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminDeleteResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/barbers/{id}/reviews": {
+      "get": {
+        "summary": "List barber reviews",
+        "operationId": "getBarberReviews",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Review"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid barber id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create review for barber",
+        "operationId": "upsertBarberReview",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Review updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewCreateResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Review created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewCreateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid barber id or payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User has no booking with this barber",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Barber not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bookings/me": {
+      "get": {
+        "summary": "List current user bookings",
+        "operationId": "getMyBookings",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MyBooking"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bookings/{id}": {
+      "delete": {
+        "summary": "Cancel own booking",
+        "operationId": "cancelMyBooking",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cancelled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingCancelResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid booking id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Booking not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/me": {
+      "get": {
+        "summary": "Get current user profile",
+        "operationId": "getMyProfile",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserPublicSnake"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update current user profile",
+        "operationId": "updateMyProfile",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserProfileUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileUpdateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Phone already in use",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/salons": {
+      "get": {
+        "summary": "List active salons",
+        "tags": [
+          "Public"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Salon"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/me/password": {
+      "patch": {
+        "summary": "Update current user password",
+        "operationId": "updateMyPassword",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserPasswordUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserPasswordUpdateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload or current password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cart/me": {
+      "get": {
+        "summary": "Get own cart",
+        "operationId": "getMyCart",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Clear own cart",
+        "operationId": "clearMyCart",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cleared",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartStatusResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cart/me/items/{productId}": {
+      "put": {
+        "summary": "Set product quantity in own cart",
+        "operationId": "setMyCartItem",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CartItemUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartStatusResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove product from own cart",
+        "operationId": "removeMyCartItem",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Removed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartStatusResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid product id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

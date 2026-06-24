@@ -1,0 +1,164 @@
+﻿import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { Route, Routes } from "react-router-dom";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import ProfileSettings from "@/pages/ProfileSettings";
+import { renderWithProviders } from "@/test/renderWithProviders";
+
+const mockApi = vi.hoisted(() => ({
+  updateProfile: vi.fn(),
+  updatePassword: vi.fn(),
+}));
+
+vi.mock("@/lib/api", async () => {
+  const actual = await vi.importActual<typeof import("@/lib/api")>("@/lib/api");
+  return {
+    ...actual,
+    api: mockApi,
+  };
+});
+
+describe("Profile settings flow", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+    localStorage.setItem(
+      "hairline-auth",
+      JSON.stringify({
+        token: "token-xyz",
+        user: {
+          id: 1,
+          fullName: "Test User",
+          phone: "+996700000001",
+        },
+      }),
+    );
+  });
+
+  it("submits changed profile fields", async () => {
+    mockApi.updateProfile.mockResolvedValue({
+      user: {
+        id: 1,
+        full_name: "Updated User",
+        phone: "+996700000001",
+        created_at: "2099-01-01T00:00:00.000Z",
+      },
+    });
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/profile/settings" element={<ProfileSettings />} />
+      </Routes>,
+      { route: "/profile/settings" },
+    );
+
+    const fullNameInput = screen.getByLabelText("Full name");
+    fireEvent.change(fullNameInput, { target: { value: "Updated User" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save changes" }));
+
+    await waitFor(() => {
+      expect(mockApi.updateProfile).toHaveBeenCalledWith("token-xyz", {
+        fullName: "Updated User",
+      });
+    });
+  });
+
+  it("saves phone with the selected country prefix and length limit", async () => {
+    mockApi.updateProfile.mockResolvedValue({
+      user: {
+        id: 1,
+        full_name: "Test User",
+        phone: "+79161234567",
+        created_at: "2099-01-01T00:00:00.000Z",
+      },
+    });
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/profile/settings" element={<ProfileSettings />} />
+      </Routes>,
+      { route: "/profile/settings" },
+    );
+
+    fireEvent.change(screen.getByLabelText("Phone country"), {
+      target: { value: "ru" },
+    });
+
+    const phoneInput = screen.getByLabelText("Phone");
+    expect(phoneInput).toHaveAttribute("maxLength", "12");
+
+    fireEvent.change(phoneInput, {
+      target: { value: "+7916123456789" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Save changes" }));
+
+    await waitFor(() => {
+      expect(mockApi.updateProfile).toHaveBeenCalledWith("token-xyz", {
+        phone: "+79161234567",
+      });
+    });
+  });
+
+  it("blocks submit on password mismatch and submits valid password change", async () => {
+    mockApi.updatePassword.mockResolvedValue({ status: "password_updated" });
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/profile/settings" element={<ProfileSettings />} />
+      </Routes>,
+      { route: "/profile/settings" },
+    );
+
+    const currentPasswordInput = screen.getByLabelText("Current password");
+    const newPasswordInput = screen.getByLabelText("New password");
+    const repeatPasswordInput = screen.getByLabelText("Repeat new password");
+    const changePasswordButton = screen.getByRole("button", { name: "Change password" });
+
+    fireEvent.change(currentPasswordInput, { target: { value: "oldpassword" } });
+    fireEvent.change(newPasswordInput, { target: { value: "newpassword" } });
+    fireEvent.change(repeatPasswordInput, { target: { value: "otherpassword" } });
+
+    expect(changePasswordButton).toBeDisabled();
+
+    fireEvent.change(repeatPasswordInput, { target: { value: "newpassword" } });
+
+    await waitFor(() => {
+      expect(changePasswordButton).not.toBeDisabled();
+    });
+
+    fireEvent.click(changePasswordButton);
+
+    await waitFor(() => {
+      expect(mockApi.updatePassword).toHaveBeenCalledWith("token-xyz", {
+        currentPassword: "oldpassword",
+        newPassword: "newpassword",
+      });
+    });
+
+    await waitFor(() => {
+      expect(currentPasswordInput).toHaveValue("");
+      expect(newPasswordInput).toHaveValue("");
+      expect(repeatPasswordInput).toHaveValue("");
+    });
+  });
+
+  it("blocks password change when new password equals current password", async () => {
+    renderWithProviders(
+      <Routes>
+        <Route path="/profile/settings" element={<ProfileSettings />} />
+      </Routes>,
+      { route: "/profile/settings" },
+    );
+
+    const currentPasswordInput = screen.getByLabelText("Current password");
+    const newPasswordInput = screen.getByLabelText("New password");
+    const repeatPasswordInput = screen.getByLabelText("Repeat new password");
+    const changePasswordButton = screen.getByRole("button", { name: "Change password" });
+
+    fireEvent.change(currentPasswordInput, { target: { value: "samepass1" } });
+    fireEvent.change(newPasswordInput, { target: { value: "samepass1" } });
+    fireEvent.change(repeatPasswordInput, { target: { value: "samepass1" } });
+
+    expect(changePasswordButton).toBeDisabled();
+    expect(screen.getByText("New password must be different from the current password.")).toBeInTheDocument();
+  });
+});

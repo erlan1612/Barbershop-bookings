@@ -1,0 +1,68 @@
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Star } from "lucide-react";
+import { Link } from "react-router-dom";
+import type { Master } from "@/data/masters";
+import BookingDialog from "@/components/BookingDialog";
+import { useI18n } from "@/lib/i18n";
+
+const MasterCard = ({ master }: { master: Master }) => {
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const { tr, tv, formatYears } = useI18n();
+
+  return (
+    <>
+      <motion.div
+        whileHover={{ y: -4 }}
+        transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+        className="group relative overflow-hidden rounded-2xl border border-border bg-card card-shadow transition-shadow duration-200 hover:card-shadow-hover"
+      >
+        <Link to={`/masters/${master.id}`} className="block">
+          <div className="h-28 overflow-hidden rounded-lg md:h-28 md:aspect-[3/4]">
+            <img
+              src={master.image}
+              alt={master.name}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
+            />
+          </div>
+        </Link>
+        <div className="p-2 sm:p-4 md:p-5">
+          <div className="flex items-start justify-between gap-2">
+            <div>
+              <Link to={`/masters/${master.id}`} className="hover:underline">
+                <h3 className="text-base sm:text-lg font-medium tracking-tight">{master.name}</h3>
+              </Link>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                {tv("role", master.role)} - {formatYears(master.experience)}
+              </p>
+              <p className="line-clamp-1 text-xs text-muted-foreground">
+                {master.salonName || tr("masters.unassignedSalon")}
+              </p>
+            </div>
+            {master.available && (
+              <span className="inline-flex shrink-0 items-center rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-200">
+                {tr("master.available")}
+              </span>
+            )}
+          </div>
+          <div className="mt-2 flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
+            <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+            <span className="tabular font-medium text-foreground">{master.rating}</span>
+            <span>- {master.reviews} {tr("master.reviews")}</span>
+          </div>
+          <button
+            onClick={() => setBookingOpen(true)}
+            disabled={!master.available}
+            className="mt-3 sm:mt-4 flex h-8 sm:h-10 w-full items-center justify-center rounded-lg bg-primary py-2 text-xs sm:text-sm font-medium text-primary-foreground transition-all duration-150 hover:bg-primary/90 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50"
+          >
+            {master.available ? tr("master.book") : tr("master.nobook")}
+          </button>
+        </div>
+      </motion.div>
+      <BookingDialog master={master} open={bookingOpen} onOpenChange={setBookingOpen} />
+    </>
+  );
+};
+
+export default MasterCard;
