@@ -48,6 +48,14 @@ function getInitialState(): AuthState | null {
   }
 }
 
+function normalizeUser(raw: Record<string, unknown>): AuthUser {
+  return {
+    id: Number(raw.id),
+    fullName: String(raw.fullName ?? raw.full_name ?? ""),
+    phone: String(raw.phone ?? ""),
+  };
+}
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [state, setState] = useState<AuthState | null>(() => getInitialState());
 
@@ -67,11 +75,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.log("[Auth] Login success, user:", response.user);
       persist({
         token: response.token,
-        user: {
-          id: response.user.id,
-          fullName: response.user.fullName,
-          phone: response.user.phone,
-        },
+        user: normalizeUser(response.user),
       });
     },
     [persist],

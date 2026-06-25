@@ -34,7 +34,7 @@ const ProfileSettings = () => {
   useEffect(() => {
     if (!user) return;
     const detectedCountry = detectPhoneCountry(user.phone);
-    setFullName(user.fullName);
+    setFullName(user.fullName ?? "");
     setPhoneCountry(detectedCountry);
     setPhone(normalizePhoneInput(user.phone, detectedCountry));
   }, [user]);
@@ -42,7 +42,7 @@ const ProfileSettings = () => {
   const hasChanges = useMemo(() => {
     if (!user) return false;
     return (
-      fullName.trim() !== user.fullName ||
+      (fullName?.trim() ?? "") !== (user.fullName ?? "") ||
       normalizePhoneInput(phone, phoneCountry) !== user.phone
     );
   }, [user, fullName, phone, phoneCountry]);
@@ -110,7 +110,7 @@ const ProfileSettings = () => {
     onSuccess: (response) => {
       syncUser({
         id: response.user.id,
-        fullName: response.user.fullName,
+        fullName: (response.user as Record<string, unknown>).fullName ?? (response.user as Record<string, unknown>).full_name ?? "",
         phone: response.user.phone,
       });
       toast({

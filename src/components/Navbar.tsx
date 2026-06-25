@@ -10,7 +10,7 @@ const Navbar = () => {
   const [badgePulse, setBadgePulse] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const location = useLocation();
-  const { tr, lang } = useI18n();
+  const { tr, lang, setLang } = useI18n();
   const { isAuthenticated } = useAuth();
   const { totalItems } = useCart();
   const previousTotal = useRef(totalItems);
