@@ -76,7 +76,7 @@ const ProfileOrders = () => {
         id: booking.id,
         date: booking.date,
         time: booking.time.slice(0, 5),
-        total: `$${Number(booking.service_price).toFixed(2)}`,
+        total: `${booking.service_price} сом`,
         status: getOrderStatus(booking.date),
         service: booking.service_name,
       })) ?? [];
