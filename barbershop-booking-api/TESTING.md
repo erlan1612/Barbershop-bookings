@@ -5,7 +5,7 @@
 Set once in PowerShell:
 
 ```powershell
-$base = "https://test-4p5l.onrender.com"
+$base = "https://barbershop-bookings.onrender.com"
 ```
 
 For local testing use:

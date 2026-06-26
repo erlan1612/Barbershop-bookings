@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const express = require("express");
 const { createApp } = require('./app');
 const { refreshSeeds } = require('./db/seed');
 const { getJwtConfig } = require('./auth/jwt');

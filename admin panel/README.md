@@ -14,7 +14,7 @@ npm run dev
 - `.env` is optional.
 - By default admin panel auto-detects API base:
   - `localhost`/`127.0.0.1` -> `http://localhost:4000`
-  - any other host -> `https://test-4p5l.onrender.com`
+  - any other host -> `https://barbershop-bookings.onrender.com`
 - Optional override:
   - `VITE_API_BASE_URL=<your-api-base-url>`
 

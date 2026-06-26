@@ -1,7 +1,7 @@
 import type { EntityRecord, ListParams, ListPayload, ResourceAdapter } from "./types";
 
-const DEFAULT_REMOTE_API_BASE_URL = "https://test-4p5l.onrender.com";
-const DEFAULT_LOCAL_API_BASE_URL = "http://localhost:4000";
+const DEFAULT_REMOTE_API_BASE_URL = "https://barbershop-bookings.onrender.com";
+const DEFAULT_LOCAL_API_BASE_URL = "https://barbershop-bookings.onrender.com";
 
 function stripTrailingSlash(url: string) {
   return url.replace(/\/+$/, "");

@@ -141,14 +141,14 @@ Generated file: `src/api/generated/openapi.ts`
 
 ## Production URLs (Current)
 
-1. Frontend: `https://barber-shop-bookings-shared.vercel.app`
-2. Backend: `https://test-4p5l.onrender.com`
-3. Swagger: `https://test-4p5l.onrender.com/api/docs`
+1. Frontend: `https://barbershop-bookings-seven.vercel.app/`
+2. Backend: `https://barbershop-bookings.onrender.com`
+3. Swagger: `https://barbershop-bookings.onrender.com/api/docs`
 
 ## Quick Health Checks
 
 ```powershell
-$base = "https://test-4p5l.onrender.com"
+$base = "https://barbershop-bookings.onrender.com"
 Invoke-RestMethod "$base/api/health"
 Invoke-RestMethod "$base/api/ready"
 Invoke-RestMethod "$base/api/barbers"
