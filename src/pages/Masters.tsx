@@ -112,7 +112,7 @@ const Masters = () => {
 
         <div className="mt-8">
           {isLoading && masters.length === 0 && (
-             <div className="flex gap-3 overflow-x-auto px-3 pb-4 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:overflow-visible md:pb-0">
+             <div className="flex gap-3 overflow-x-auto px-3 pb-4 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 md:overflow-visible md:pb-0">
               {Array.from({ length: 8 }).map((_, index) => (
                 <div
                   key={`masters-skeleton-${index}`}
@@ -163,7 +163,7 @@ const Masters = () => {
 
               <div
                 ref={mastersScrollRef}
-                className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-3 pb-4 scroll-smooth md:grid md:grid-cols-2 md:overflow-visible md:pb-0 lg:grid-cols-3 xl:grid-cols-4"
+                className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-3 pb-4 scroll-smooth md:grid md:grid-cols-2 md:overflow-visible md:pb-0 lg:grid-cols-3 xl:grid-cols-3"
               >
                 {filtered.map((master, index) => (
                   <motion.div

@@ -17,7 +17,7 @@ const ProductCard = ({ product, onProductClick }: { product: Product; onProductC
       onClick={handleCardClick}
       className="group surface-card overflow-hidden card-shadow transition-shadow duration-200 hover:card-shadow-hover cursor-pointer"
     >
-      <div className="h-28 rounded-lg md:aspect-square overflow-hidden bg-secondary">
+       <div className="h-28 rounded-lg md:aspect-[4/5] overflow-hidden bg-secondary">
         <img
           src={product.image}
           alt={product.name}
