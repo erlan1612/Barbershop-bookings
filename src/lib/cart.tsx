@@ -11,6 +11,7 @@ import { ApiError, api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { toast } from "@/hooks/use-toast";
 import { useI18n } from "@/lib/i18n";
+import { products as localProducts } from "@/data/products";
 
 export type CartItem = {
   id: string;
@@ -40,11 +41,12 @@ export type CartContextValue = {
 const CartContext = createContext<CartContextValue | undefined>(undefined);
 
 function mapApiCartItemToCartItem(item: Awaited<ReturnType<typeof api.getMyCart>>["items"][number]): CartItem {
+  const localProduct = localProducts.find((product) => product.id === String(item.product_id));
   return {
     id: String(item.product_id),
     name: item.name,
     price: Number(item.price),
-    image: item.image_url || "",
+    image: localProduct?.image || item.image_url || "",
     quantity: Number(item.quantity),
   };
 }
