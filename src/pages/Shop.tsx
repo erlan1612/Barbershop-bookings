@@ -98,7 +98,7 @@ const Shop = () => {
 
         <div
           ref={productsScrollRef}
-          className="flex overflow-x-auto gap-3 px-3 scroll-smooth snap-x snap-mandatory pb-4 md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 md:overflow-visible md:pb-0"
+          className="flex overflow-x-auto gap-3 px-3 scroll-smooth snap-x snap-mandatory pb-4 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:overflow-visible md:pb-0"
         >
           {isLoading &&
             products.length === 0 &&
