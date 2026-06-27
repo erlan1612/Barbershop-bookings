@@ -13,6 +13,7 @@ import { ruDictionary } from "@/lib/i18n/dictionaries/ru";
 import type { I18nDictionary, I18nKey } from "@/lib/i18n/types";
 
 export type Lang = "ky" | "ru" | "en";
+export type Theme = "light" | "dark";
 type ValueGroup = "role" | "location" | "specialty" | "productType" | "service";
 
 const dictionaries: Record<Lang, I18nDictionary> = {
@@ -81,6 +82,13 @@ if (import.meta.env.DEV) {
   verifyDictionaryKeys();
 }
 
+function getInitialTheme(): Theme {
+  const saved = localStorage.getItem("hairline-theme") as Theme | null;
+  if (saved === "dark" || saved === "light") return saved;
+  if (typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches) return "dark";
+  return "light";
+}
+
 interface I18nContextType {
   lang: Lang;
   setLang: (lang: Lang) => void;
@@ -89,17 +97,30 @@ interface I18nContextType {
   price: (amount: number) => string;
   formatDate: (date: Date, options?: Intl.DateTimeFormatOptions) => string;
   formatYears: (value: number | string) => string;
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
 }
 
 const I18nContext = createContext<I18nContextType | null>(null);
 
 export const I18nProvider = ({ children }: { children: ReactNode }) => {
   const [lang, setLang] = useState<Lang>(getInitialLang);
+  const [theme, setThemeState] = useState<Theme>(getInitialTheme);
 
   const changeLang = useCallback((newLang: Lang) => {
     setLang(newLang);
     localStorage.setItem("hairline-lang", newLang);
   }, []);
+
+  const setTheme = useCallback((newTheme: Theme) => {
+    setThemeState(newTheme);
+    localStorage.setItem("hairline-theme", newTheme);
+    document.documentElement.classList.toggle("dark", newTheme === "dark");
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+  }, [theme]);
 
   useEffect(() => {
     document.documentElement.lang = languageTag(lang);
@@ -167,8 +188,10 @@ export const I18nProvider = ({ children }: { children: ReactNode }) => {
       price,
       formatDate,
       formatYears,
+      theme,
+      setTheme,
     }),
-    [lang, changeLang, tr, tv, price, formatDate, formatYears],
+    [lang, changeLang, tr, tv, price, formatDate, formatYears, theme, setTheme],
   );
 
   return <I18nContext.Provider value={contextValue}>{children}</I18nContext.Provider>;

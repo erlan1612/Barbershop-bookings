@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type KeyboardEvent } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { KeyRound, Phone, Save } from "lucide-react";
+import { KeyRound, Phone, Save, Sun, Moon } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useI18n } from "@/lib/i18n";
 import { ApiError, api } from "@/lib/api";
@@ -23,7 +23,7 @@ const PASSWORD_PATTERN = /^[A-Za-z0-9]+$/;
 
 const ProfileSettings = () => {
   const { user, token, syncUser } = useAuth();
-  const { tr } = useI18n();
+  const { tr, theme, setTheme } = useI18n();
   const [fullName, setFullName] = useState("");
   const [phoneCountry, setPhoneCountry] = useState<PhoneCountry>(DEFAULT_PHONE_COUNTRY);
   const [phone, setPhone] = useState(getPhonePrefix(DEFAULT_PHONE_COUNTRY));
@@ -365,6 +365,32 @@ const ProfileSettings = () => {
               : tr("profile.settings.password.action")}
           </button>
         </form>
+
+        <div className="surface-card space-y-4 p-5 card-shadow sm:p-6">
+          <div>
+            <h2 className="text-lg font-semibold">{tr("profile.settings.theme.title")}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {tr("profile.settings.theme.desc")}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="inline-flex h-10 items-center gap-2 rounded-lg bg-secondary px-5 text-sm font-medium text-foreground transition-colors hover:bg-secondary/80"
+          >
+            {theme === "dark" ? (
+              <>
+                <Sun className="h-4 w-4" />
+                {tr("profile.settings.theme.light")}
+              </>
+            ) : (
+              <>
+                <Moon className="h-4 w-4" />
+                {tr("profile.settings.theme.dark")}
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
