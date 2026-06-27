@@ -1,15 +1,10 @@
 import { X } from "lucide-react";
 import type { Product } from "@/data/products";
 import { useI18n } from "@/lib/i18n";
-import { useCart } from "@/lib/cart";
+import AddToCartButton from "@/components/AddToCartButton";
 
 const ProductModal = ({ product, onClose }: { product: Product; onClose: () => void }) => {
   const { tv, price } = useI18n();
-  const { addToCart } = useCart();
-
-   const handleAddToCart = () => {
-     addToCart(product);
-   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -54,17 +49,15 @@ const ProductModal = ({ product, onClose }: { product: Product; onClose: () => v
 
         {/* Buttons */}
         <div className="border-t border-border p-6 space-y-3">
-          <button
-            onClick={handleAddToCart}
-            className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 active:scale-95"
-          >
-            В корзину
-          </button>
+          <AddToCartButton
+            product={product}
+            className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 active:scale-95 disabled:pointer-events-none disabled:opacity-70"
+          />
           <button
             onClick={onClose}
             className="w-full rounded-lg border border-border bg-secondary px-4 py-2.5 text-sm font-medium text-foreground transition-all hover:bg-secondary/75"
           >
-            Назад
+            Back
           </button>
         </div>
       </div>

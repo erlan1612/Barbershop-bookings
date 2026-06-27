@@ -51,6 +51,8 @@ describe("Profile settings flow", () => {
       { route: "/profile/settings" },
     );
 
+    fireEvent.click(screen.getByRole("button", { name: "Edit" }));
+
     const fullNameInput = screen.getByLabelText("Full name");
     fireEvent.change(fullNameInput, { target: { value: "Updated User" } });
     fireEvent.click(screen.getByRole("button", { name: "Save changes" }));
@@ -78,6 +80,8 @@ describe("Profile settings flow", () => {
       </Routes>,
       { route: "/profile/settings" },
     );
+
+    fireEvent.click(screen.getByRole("button", { name: "Edit" }));
 
     fireEvent.change(screen.getByLabelText("Phone country"), {
       target: { value: "ru" },
@@ -107,6 +111,8 @@ describe("Profile settings flow", () => {
       </Routes>,
       { route: "/profile/settings" },
     );
+
+    fireEvent.click(screen.getByRole("button", { name: "Change password" }));
 
     const currentPasswordInput = screen.getByLabelText("Current password");
     const newPasswordInput = screen.getByLabelText("New password");
@@ -148,6 +154,8 @@ describe("Profile settings flow", () => {
       </Routes>,
       { route: "/profile/settings" },
     );
+
+    fireEvent.click(screen.getByRole("button", { name: "Change password" }));
 
     const currentPasswordInput = screen.getByLabelText("Current password");
     const newPasswordInput = screen.getByLabelText("New password");

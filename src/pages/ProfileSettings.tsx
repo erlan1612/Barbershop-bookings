@@ -16,6 +16,12 @@ import {
   normalizePhoneInput,
   type PhoneCountry,
 } from "@/lib/phone";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const MIN_PASSWORD_LENGTH = 8;
 const MAX_PASSWORD_LENGTH = 20;
@@ -30,6 +36,9 @@ const ProfileSettings = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
+
+  const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -117,6 +126,7 @@ const ProfileSettings = () => {
         title: tr("profile.settings.save.success.title"),
         description: tr("profile.settings.save.success.desc"),
       });
+      setIsProfileDialogOpen(false);
     },
     onError: (error) => {
       toast({
@@ -152,6 +162,7 @@ const ProfileSettings = () => {
         title: tr("profile.settings.password.success.title"),
         description: tr("profile.settings.password.success.desc"),
       });
+      setIsPasswordDialogOpen(false);
     },
     onError: (error) => {
       toast({
@@ -178,220 +189,260 @@ const ProfileSettings = () => {
         </p>
       </div>
 
-      <div className="space-y-5">
-        <form
-          className="surface-card space-y-4 p-5 card-shadow sm:p-6"
-          onSubmit={(event) => {
-            event.preventDefault();
-            if (hasChanges) {
-              saveMutation.mutate();
-            }
-          }}
-        >
-          <div>
-            <label
-              htmlFor="profile-fullname"
-              className="mb-2 block text-xs uppercase tracking-wide text-muted-foreground"
-            >
-              {tr("profile.field.fullName")}
-            </label>
-            <input
-              id="profile-fullname"
-              value={fullName}
-              onChange={(event) => setFullName(event.target.value)}
-              className="h-10 sm:h-11 w-full min-w-0 box-border rounded-lg border-0 bg-secondary px-4 text-sm text-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-foreground"
-              minLength={2}
-              maxLength={120}
-              required
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="profile-phone"
-              className="mb-2 block text-xs uppercase tracking-wide text-muted-foreground"
-            >
-              {tr("profile.field.phone")}
-            </label>
-            <div className="flex gap-2">
-              <select
-                aria-label="Phone country"
-                value={phoneCountry}
-                onChange={(event) => handlePhoneCountryChange(event.target.value)}
-                style={{ minWidth: 70, maxWidth: 100, flexShrink: 0 }}
-                className="h-10 sm:h-11 w-20 sm:w-24 box-border rounded-lg border-0 bg-secondary px-3 text-sm text-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-foreground"
-              >
-                {PHONE_COUNTRIES.map((country) => (
-                  <option key={country.code} value={country.code}>
-                    {country.name}
-                  </option>
-                ))}
-              </select>
-              <div className="relative flex-1">
-                <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-                <input
-                  id="profile-phone"
-                  value={phone}
-                  onChange={(event) => handlePhoneChange(event.target.value)}
-                  onKeyDown={handlePhoneKeyDown}
-                  onFocus={() => setPhone((current) => normalizePhoneInput(current, phoneCountry))}
-                  type="tel"
-                  inputMode="numeric"
-                  maxLength={getPhoneMaxLength(phoneCountry)}
-                  pattern={getPhonePattern(phoneCountry)}
-                  className="h-10 sm:h-11 w-full min-w-0 box-border rounded-lg border-0 bg-secondary pl-10 pr-4 text-sm text-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-foreground"
-                  required
-                />
-              </div>
+      <div className="grid gap-3 sm:max-w-2xl">
+        <div className="surface-card card-shadow p-4 sm:p-5">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0 space-y-1">
+              <h2 className="text-sm font-semibold text-foreground">{tr("profile.field.fullName")}</h2>
+              <p className="truncate text-sm text-muted-foreground">{fullName || user?.fullName}</p>
+              <p className="truncate text-sm text-muted-foreground">{phone || user?.phone}</p>
             </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={!hasChanges || saveMutation.isPending}
-            className="inline-flex h-10 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
-          >
-            <Save className="h-4 w-4" />
-            {saveMutation.isPending ? tr("auth.submit.wait") : tr("profile.settings.save.action")}
-          </button>
-        </form>
-
-        <form
-          className="surface-card space-y-4 p-5 card-shadow sm:p-6"
-          onSubmit={(event) => {
-            event.preventDefault();
-            if (canSubmitPassword) {
-              passwordMutation.mutate();
-            }
-          }}
-        >
-          <div>
-            <h2 className="text-lg font-semibold">{tr("profile.settings.password.title")}</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {tr("profile.settings.password.subtitle")}
-            </p>
-          </div>
-
-          <div>
-            <label
-              htmlFor="profile-password-current"
-              className="mb-2 block text-xs uppercase tracking-wide text-muted-foreground"
+            <button
+              type="button"
+              onClick={() => setIsProfileDialogOpen(true)}
+              className="shrink-0 rounded-lg bg-secondary px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary/80"
             >
-              {tr("profile.settings.password.current")}
-            </label>
-            <PasswordInput
-              id="profile-password-current"
-              value={currentPassword}
-              onChange={(event) => setCurrentPassword(event.target.value)}
-              className="h-10 sm:h-11 w-full min-w-0 box-border rounded-lg border-0 bg-secondary px-4 text-sm text-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-foreground"
-              autoComplete="current-password"
-              required
-            />
+              {tr("profile.settings.edit")}
+            </button>
           </div>
+        </div>
 
-          <div>
-            <label
-              htmlFor="profile-password-new"
-              className="mb-2 block text-xs uppercase tracking-wide text-muted-foreground"
+        <div className="surface-card card-shadow p-4 sm:p-5">
+          <div className="flex items-start justify-between gap-4">
+            <div className="space-y-1">
+              <h2 className="text-sm font-semibold text-foreground">{tr("profile.settings.password.title")}</h2>
+              <p className="text-sm text-muted-foreground">••••••••</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsPasswordDialogOpen(true)}
+              className="shrink-0 rounded-lg bg-secondary px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary/80"
             >
-              {tr("profile.settings.password.new")}
-            </label>
-            <PasswordInput
-              id="profile-password-new"
-              value={newPassword}
-              onChange={(event) => setNewPassword(event.target.value)}
-              className="h-10 sm:h-11 w-full min-w-0 box-border rounded-lg border-0 bg-secondary px-4 text-sm text-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-foreground"
-              minLength={MIN_PASSWORD_LENGTH}
-              maxLength={MAX_PASSWORD_LENGTH}
-              pattern="[A-Za-z0-9]+"
-              autoComplete="new-password"
-              required
-            />
-            {passwordTooShort && (
-              <p className="mt-1 text-xs text-destructive">
-                {tr("profile.settings.password.error.minLength")}
-              </p>
-            )}
-            {passwordTooLong && (
-              <p className="mt-1 text-xs text-destructive">
-                {tr("profile.settings.password.error.maxLength")}
-              </p>
-            )}
-            {passwordInvalidCharacters && (
-              <p className="mt-1 text-xs text-destructive">
-                {tr("profile.settings.password.error.characters")}
-              </p>
-            )}
-            {passwordSameAsCurrent && (
-              <p className="mt-1 text-xs text-destructive">
-                {tr("profile.settings.password.error.sameAsCurrent")}
-              </p>
-            )}
+              {tr("profile.settings.password.action")}
+            </button>
           </div>
+        </div>
 
-          <div>
-            <label
-              htmlFor="profile-password-repeat"
-              className="mb-2 block text-xs uppercase tracking-wide text-muted-foreground"
+        <div className="surface-card card-shadow p-4 sm:p-5">
+          <div className="flex items-start justify-between gap-4">
+            <div className="space-y-1">
+              <h2 className="text-sm font-semibold text-foreground">{tr("profile.settings.theme.title")}</h2>
+              <p className="text-sm text-muted-foreground">{tr("profile.settings.theme.desc")}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-secondary px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary/80"
             >
-              {tr("profile.settings.password.repeat")}
-            </label>
-            <PasswordInput
-              id="profile-password-repeat"
-              value={repeatPassword}
-              onChange={(event) => setRepeatPassword(event.target.value)}
-              className="h-10 sm:h-11 w-full min-w-0 box-border rounded-lg border-0 bg-secondary px-4 text-sm text-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-foreground"
-              minLength={MIN_PASSWORD_LENGTH}
-              maxLength={MAX_PASSWORD_LENGTH}
-              pattern="[A-Za-z0-9]+"
-              autoComplete="new-password"
-              required
-            />
-            {passwordMismatch && (
-              <p className="mt-1 text-xs text-destructive">
-                {tr("profile.settings.password.error.mismatch")}
-              </p>
-            )}
+              {theme === "dark" ? (
+                <>
+                  <Sun className="h-4 w-4" />
+                  {tr("profile.settings.theme.light")}
+                </>
+              ) : (
+                <>
+                  <Moon className="h-4 w-4" />
+                  {tr("profile.settings.theme.dark")}
+                </>
+              )}
+            </button>
           </div>
-
-          <button
-            type="submit"
-            disabled={!canSubmitPassword || passwordMutation.isPending}
-            className="inline-flex h-10 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
-          >
-            <KeyRound className="h-4 w-4" />
-            {passwordMutation.isPending
-              ? tr("auth.submit.wait")
-              : tr("profile.settings.password.action")}
-          </button>
-        </form>
-
-        <div className="surface-card space-y-4 p-5 card-shadow sm:p-6">
-          <div>
-            <h2 className="text-lg font-semibold">{tr("profile.settings.theme.title")}</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {tr("profile.settings.theme.desc")}
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="inline-flex h-10 items-center gap-2 rounded-lg bg-secondary px-5 text-sm font-medium text-foreground transition-colors hover:bg-secondary/80"
-          >
-            {theme === "dark" ? (
-              <>
-                <Sun className="h-4 w-4" />
-                {tr("profile.settings.theme.light")}
-              </>
-            ) : (
-              <>
-                <Moon className="h-4 w-4" />
-                {tr("profile.settings.theme.dark")}
-              </>
-            )}
-          </button>
         </div>
       </div>
+
+      <Dialog open={isProfileDialogOpen} onOpenChange={setIsProfileDialogOpen}>
+        <DialogContent className="sm:rounded-xl">
+          <DialogHeader>
+            <DialogTitle>{tr("profile.settings.title")}</DialogTitle>
+          </DialogHeader>
+          <form
+            className="space-y-4"
+            onSubmit={(event) => {
+              event.preventDefault();
+              if (hasChanges) {
+                saveMutation.mutate();
+              }
+            }}
+          >
+            <div>
+              <label
+                htmlFor="profile-fullname"
+                className="mb-2 block text-xs uppercase tracking-wide text-muted-foreground"
+              >
+                {tr("profile.field.fullName")}
+              </label>
+              <input
+                id="profile-fullname"
+                value={fullName}
+                onChange={(event) => setFullName(event.target.value)}
+                className="h-10 sm:h-11 w-full min-w-0 box-border rounded-lg border-0 bg-secondary px-4 text-sm text-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-foreground"
+                minLength={2}
+                maxLength={120}
+                required
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="profile-phone"
+                className="mb-2 block text-xs uppercase tracking-wide text-muted-foreground"
+              >
+                {tr("profile.field.phone")}
+              </label>
+              <div className="flex gap-2">
+                <select
+                  aria-label="Phone country"
+                  value={phoneCountry}
+                  onChange={(event) => handlePhoneCountryChange(event.target.value)}
+                  style={{ minWidth: 70, maxWidth: 100, flexShrink: 0 }}
+                  className="h-10 sm:h-11 w-20 sm:w-24 box-border rounded-lg border-0 bg-secondary px-3 text-sm text-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-foreground"
+                >
+                  {PHONE_COUNTRIES.map((country) => (
+                    <option key={country.code} value={country.code}>
+                      {country.name}
+                    </option>
+                  ))}
+                </select>
+                <div className="relative flex-1">
+                  <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                  <input
+                    id="profile-phone"
+                    value={phone}
+                    onChange={(event) => handlePhoneChange(event.target.value)}
+                    onKeyDown={handlePhoneKeyDown}
+                    onFocus={() => setPhone((current) => normalizePhoneInput(current, phoneCountry))}
+                    type="tel"
+                    inputMode="numeric"
+                    maxLength={getPhoneMaxLength(phoneCountry)}
+                    pattern={getPhonePattern(phoneCountry)}
+                    className="h-10 sm:h-11 w-full min-w-0 box-border rounded-lg border-0 bg-secondary pl-10 pr-4 text-sm text-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-foreground"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={!hasChanges || saveMutation.isPending}
+              className="inline-flex h-10 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
+            >
+              <Save className="h-4 w-4" />
+              {saveMutation.isPending ? tr("auth.submit.wait") : tr("profile.settings.save.action")}
+            </button>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
+        <DialogContent className="sm:rounded-xl">
+          <DialogHeader>
+            <DialogTitle>{tr("profile.settings.password.title")}</DialogTitle>
+          </DialogHeader>
+          <form
+            className="space-y-4"
+            onSubmit={(event) => {
+              event.preventDefault();
+              if (canSubmitPassword) {
+                passwordMutation.mutate();
+              }
+            }}
+          >
+            <div>
+              <label
+                htmlFor="profile-password-current"
+                className="mb-2 block text-xs uppercase tracking-wide text-muted-foreground"
+              >
+                {tr("profile.settings.password.current")}
+              </label>
+              <PasswordInput
+                id="profile-password-current"
+                value={currentPassword}
+                onChange={(event) => setCurrentPassword(event.target.value)}
+                className="h-10 sm:h-11 w-full min-w-0 box-border rounded-lg border-0 bg-secondary px-4 text-sm text-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-foreground"
+                autoComplete="current-password"
+                required
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="profile-password-new"
+                className="mb-2 block text-xs uppercase tracking-wide text-muted-foreground"
+              >
+                {tr("profile.settings.password.new")}
+              </label>
+              <PasswordInput
+                id="profile-password-new"
+                value={newPassword}
+                onChange={(event) => setNewPassword(event.target.value)}
+                className="h-10 sm:h-11 w-full min-w-0 box-border rounded-lg border-0 bg-secondary px-4 text-sm text-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-foreground"
+                minLength={MIN_PASSWORD_LENGTH}
+                maxLength={MAX_PASSWORD_LENGTH}
+                pattern="[A-Za-z0-9]+"
+                autoComplete="new-password"
+                required
+              />
+              {passwordTooShort && (
+                <p className="mt-1 text-xs text-destructive">
+                  {tr("profile.settings.password.error.minLength")}
+                </p>
+              )}
+              {passwordTooLong && (
+                <p className="mt-1 text-xs text-destructive">
+                  {tr("profile.settings.password.error.maxLength")}
+                </p>
+              )}
+              {passwordInvalidCharacters && (
+                <p className="mt-1 text-xs text-destructive">
+                  {tr("profile.settings.password.error.characters")}
+                </p>
+              )}
+              {passwordSameAsCurrent && (
+                <p className="mt-1 text-xs text-destructive">
+                  {tr("profile.settings.password.error.sameAsCurrent")}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="profile-password-repeat"
+                className="mb-2 block text-xs uppercase tracking-wide text-muted-foreground"
+              >
+                {tr("profile.settings.password.repeat")}
+              </label>
+              <PasswordInput
+                id="profile-password-repeat"
+                value={repeatPassword}
+                onChange={(event) => setRepeatPassword(event.target.value)}
+                className="h-10 sm:h-11 w-full min-w-0 box-border rounded-lg border-0 bg-secondary px-4 text-sm text-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-foreground"
+                minLength={MIN_PASSWORD_LENGTH}
+                maxLength={MAX_PASSWORD_LENGTH}
+                pattern="[A-Za-z0-9]+"
+                autoComplete="new-password"
+                required
+              />
+              {passwordMismatch && (
+                <p className="mt-1 text-xs text-destructive">
+                  {tr("profile.settings.password.error.mismatch")}
+                </p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              disabled={!canSubmitPassword || passwordMutation.isPending}
+              className="inline-flex h-10 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
+            >
+              <KeyRound className="h-4 w-4" />
+              {passwordMutation.isPending
+                ? tr("auth.submit.wait")
+                : tr("profile.settings.password.action")}
+            </button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
