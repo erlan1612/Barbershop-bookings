@@ -216,7 +216,7 @@
   "profile.settings.password.success.desc": "Жаңы сырсөз ийгиликтүү сакталды.",
   "profile.settings.password.error.title": "Сырсөздү алмаштыруу катасы",
   "profile.settings.password.error.desc": "Сырсөздү жаңыртуу мүмкүн болбоду. Кайра аракет кылыңыз.",
-  "profile.settings.password.error.minLength": "Жаңы сырсөз кеминде 6 белгиден турушу керек.",
+  "profile.settings.password.error.minLength": "Жаңы сырсөз кеминде 8 белгиден турушу керек.",
   "profile.settings.password.error.mismatch": "Жаңы сырсөз жана кайталоо дал келиши керек.",
   "notfound.error": "Ката",
   "notfound.desc": "Кечиресиз, бул барак табылган жок",

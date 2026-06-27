@@ -216,7 +216,7 @@
   "profile.settings.password.success.desc": "Новый пароль успешно сохранён.",
   "profile.settings.password.error.title": "Ошибка смены пароля",
   "profile.settings.password.error.desc": "Не удалось обновить пароль. Попробуйте снова.",
-  "profile.settings.password.error.minLength": "Новый пароль должен содержать минимум 6 символов.",
+  "profile.settings.password.error.minLength": "Новый пароль должен содержать минимум 8 символов.",
   "profile.settings.password.error.mismatch": "Новый пароль и повтор должны совпадать.",
   "notfound.error": "Ошибка",
   "notfound.desc": "Страница не найдена",

@@ -17,7 +17,7 @@ import {
   type PhoneCountry,
 } from "@/lib/phone";
 
-const MIN_PASSWORD_LENGTH = 6;
+const MIN_PASSWORD_LENGTH = 8;
 const MAX_PASSWORD_LENGTH = 20;
 const PASSWORD_PATTERN = /^[A-Za-z0-9]+$/;
 

@@ -216,7 +216,7 @@
   "profile.settings.password.success.desc": "Your password has been changed.",
   "profile.settings.password.error.title": "Password update failed",
   "profile.settings.password.error.desc": "Could not update password. Please try again.",
-  "profile.settings.password.error.minLength": "New password must be at least 6 characters.",
+  "profile.settings.password.error.minLength": "New password must be at least 8 characters.",
   "profile.settings.password.error.mismatch": "New password and repeat password must match.",
   "notfound.error": "Error",
   "notfound.desc": "Oops! Page not found",

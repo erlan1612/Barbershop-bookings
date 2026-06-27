@@ -187,8 +187,9 @@ const Auth = () => {
                   onChange={(event) => setPassword(event.target.value)}
                   required
                   minLength={6}
-                  maxLength={isLogin ? undefined : 20}
-                  pattern={isLogin ? undefined : "[A-Za-z0-9]+"}
+                   maxLength={isLogin ? undefined : 20}
+                   minLength={isLogin ? undefined : 8}
+                   pattern={isLogin ? undefined : "[A-Za-z0-9]+"}
                   placeholder={tr("auth.field.password")}
                   className="h-10 sm:h-11 w-full min-w-0 box-border rounded-lg border-0 bg-secondary py-3 pl-10 text-sm text-foreground outline-none ring-1 ring-border transition-shadow placeholder:text-muted-foreground focus:ring-2 focus:ring-foreground"
                 />

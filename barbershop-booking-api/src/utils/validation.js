@@ -6,7 +6,7 @@ const phoneRegex = /^(\+996\d{9}|\+7\d{10}|\+998\d{9}|\+992\d{9}|\+994\d{9}|\+37
 const passwordRegex = /^[A-Za-z0-9]+$/;
 const passwordSchema = z
   .string()
-  .min(6)
+  .min(8)
   .max(20)
   .regex(passwordRegex, 'Password must contain only letters and numbers');
 
