@@ -147,6 +147,7 @@
   "auth.field.phone.placeholder": "+996000000000",
   "auth.field.email": "Email",
   "auth.field.password": "Password",
+  "auth.error.fullName": "Name must contain only letters, spaces, hyphens, or apostrophes.",
   "auth.submit.wait": "Please wait...",
   "auth.submit.login": "Sign in",
   "auth.submit.register": "Create account",

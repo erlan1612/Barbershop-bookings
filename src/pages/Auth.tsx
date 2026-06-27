@@ -1,4 +1,4 @@
-import { useMemo, useState, type KeyboardEvent } from "react";
+import { useMemo, useState, useCallback, type KeyboardEvent } from "react";
 import { motion } from "framer-motion";
 import { Lock, User, Phone, ArrowRight } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -18,9 +18,12 @@ import {
   type PhoneCountry,
 } from "@/lib/phone";
 
+const NAME_REGEX = /^[A-Za-zА-Яа-яЁё\s'-]+$/;
+
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [fullName, setFullName] = useState("");
+  const [fullNameError, setFullNameError] = useState("");
   const [phoneCountry, setPhoneCountry] = useState<PhoneCountry>(DEFAULT_PHONE_COUNTRY);
   const [phone, setPhone] = useState(getPhonePrefix(DEFAULT_PHONE_COUNTRY));
   const [password, setPassword] = useState("");
@@ -36,9 +39,41 @@ const Auth = () => {
     return query.get("redirect") || "/profile";
   }, [location.search]);
 
+  const validateName = useCallback(
+    (value: string): string => {
+      const trimmed = value.trim();
+      if (!trimmed) {
+        return "";
+      }
+      if (!NAME_REGEX.test(trimmed) || !/[A-Za-zА-Яа-яЁё]/.test(trimmed)) {
+        return tr("auth.error.fullName");
+      }
+      return "";
+    },
+    [tr],
+  );
+
+  const handleFullNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setFullName(value);
+    if (fullNameError) {
+      setFullNameError(validateName(value));
+    }
+  };
+
+  const handleFullNameBlur = () => {
+    setFullNameError(validateName(fullName));
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
+    const nameValidationError = validateName(fullName);
+    setFullNameError(nameValidationError);
+    if (nameValidationError) {
+      setIsSubmitting(false);
+      return;
+    }
     const phoneValue = normalizePhoneInput(phone, phoneCountry);
     console.log("[Auth] Submit form - mode:", isLogin ? "login" : "register", { fullName, phone: phoneValue, password });
     try {
@@ -134,19 +169,25 @@ const Auth = () => {
 
           <div className="p-6 sm:p-8">
             <form className="space-y-4" onSubmit={handleSubmit}>
-               {!isLogin && (
-                 <div className="relative">
-                   <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                   <input
-                     value={fullName}
-                     onChange={(event) => setFullName(event.target.value)}
-                     required
-                     type="text"
-                     placeholder={tr("auth.field.fullName")}
-                     className="h-10 sm:h-11 w-full min-w-0 box-border rounded-lg border-0 bg-secondary py-3 pl-10 pr-4 text-sm text-foreground outline-none ring-1 ring-border transition-shadow placeholder:text-muted-foreground focus:ring-2 focus:ring-foreground"
-                   />
-                 </div>
-               )}
+              {!isLogin && (
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    value={fullName}
+                    onChange={handleFullNameChange}
+                    onBlur={handleFullNameBlur}
+                    required
+                    type="text"
+                    placeholder={tr("auth.field.fullName")}
+                    className={`h-10 sm:h-11 w-full min-w-0 box-border rounded-lg border-0 bg-secondary py-3 pl-10 pr-4 text-sm text-foreground outline-none transition-shadow placeholder:text-muted-foreground focus:ring-2 ${
+                      fullNameError ? "ring-2 ring-destructive" : "ring-1 ring-border focus:ring-foreground"
+                    }`}
+                  />
+                  {fullNameError && (
+                    <p className="mt-1 text-xs text-destructive">{fullNameError}</p>
+                  )}
+                </div>
+              )}
 
               <div className="flex gap-2">
                 <select
@@ -186,17 +227,16 @@ const Auth = () => {
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   required
-                  minLength={6}
-                   maxLength={isLogin ? undefined : 20}
-                   minLength={isLogin ? undefined : 8}
-                   pattern={isLogin ? undefined : "[A-Za-z0-9]+"}
+                  maxLength={isLogin ? undefined : 20}
+                  minLength={isLogin ? undefined : 8}
+                  pattern={isLogin ? undefined : "[A-Za-z0-9]+"}
                   placeholder={tr("auth.field.password")}
                   className="h-10 sm:h-11 w-full min-w-0 box-border rounded-lg border-0 bg-secondary py-3 pl-10 text-sm text-foreground outline-none ring-1 ring-border transition-shadow placeholder:text-muted-foreground focus:ring-2 focus:ring-foreground"
                 />
               </div>
 
               <button
-                disabled={isSubmitting}
+                disabled={isSubmitting || (!isLogin && !!fullNameError)}
                 type="submit"
                 className="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
               >
@@ -211,10 +251,14 @@ const Auth = () => {
 
             <p className="mt-6 text-center text-sm text-muted-foreground">
               {isLogin ? tr("auth.toggle.noAccount") : tr("auth.toggle.haveAccount")}{" "}
-              <button
-                onClick={() => setIsLogin(!isLogin)}
-                className="font-medium text-foreground underline underline-offset-4 hover:no-underline"
-              >
+                <button
+                  onClick={() => {
+                    setIsLogin(!isLogin);
+                    setFullName("");
+                    setFullNameError("");
+                  }}
+                  className="font-medium text-foreground underline underline-offset-4 hover:no-underline"
+                >
                 {isLogin ? tr("auth.toggle.create") : tr("auth.toggle.login")}
               </button>
             </p>

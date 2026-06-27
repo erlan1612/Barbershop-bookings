@@ -147,6 +147,7 @@
   "auth.field.phone.placeholder": "+996000000000",
   "auth.field.email": "Email",
   "auth.field.password": "Сырсөз",
+  "auth.error.fullName": "Аты жана фамильянын үзүрлөрү, пробел, дефис же апостроф болушу керек.",
   "auth.submit.wait": "Күтүңүз...",
   "auth.submit.login": "Кирүү",
   "auth.submit.register": "Аккаунт түзүү",

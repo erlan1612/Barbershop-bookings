@@ -147,6 +147,7 @@
   "auth.field.phone.placeholder": "+996000000000",
   "auth.field.email": "Email",
   "auth.field.password": "Пароль",
+  "auth.error.fullName": "Имя может содержать только буквы, пробелы, дефисы или апострофы.",
   "auth.submit.wait": "Подождите...",
   "auth.submit.login": "Войти",
   "auth.submit.register": "Создать аккаунт",

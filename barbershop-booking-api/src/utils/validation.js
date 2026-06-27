@@ -4,6 +4,12 @@ const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
 const phoneRegex = /^(\+996\d{9}|\+7\d{10}|\+998\d{9}|\+992\d{9}|\+994\d{9}|\+374\d{8}|\+995\d{9}|\+90\d{10}|\+971\d{9}|\+1\d{10})$/;
 const passwordRegex = /^[A-Za-z0-9]+$/;
+const nameRegex = /^[A-Za-zА-Яа-яЁё\s'-]+$/;
+
+function hasLetter(value) {
+  return /[A-Za-zА-Яа-яЁё]/.test(value);
+}
+
 const passwordSchema = z
   .string()
   .min(8)
@@ -108,7 +114,11 @@ const loginSchema = z.object({
 });
 
 const registerSchema = z.object({
-  fullName: z.string().min(2).max(120),
+  fullName: z.string()
+    .min(2, 'Name is too short')
+    .max(120, 'Name is too long')
+    .regex(nameRegex, 'Name must contain only letters, spaces, hyphens, or apostrophes')
+    .refine(hasLetter, 'Name must contain only letters, spaces, hyphens, or apostrophes'),
   phone: z.string().regex(phoneRegex, 'Invalid phone number'),
   password: passwordSchema
 });
@@ -120,7 +130,12 @@ const userLoginSchema = z.object({
 
 const userProfileUpdateSchema = z
   .object({
-    fullName: z.string().min(2).max(120).optional(),
+    fullName: z.string()
+      .min(2, 'Name is too short')
+      .max(120, 'Name is too long')
+      .regex(nameRegex, 'Name must contain only letters, spaces, hyphens, or apostrophes')
+      .refine(hasLetter, 'Name must contain only letters, spaces, hyphens, or apostrophes')
+      .optional(),
     phone: z.string().regex(phoneRegex, 'Invalid phone number').optional()
   })
   .refine((value) => Object.keys(value).length > 0, {

@@ -91,9 +91,12 @@ const MOCK_USERS_KEY = "hairline-mock-users";
 const MOCK_BOOKINGS_KEY = "hairline-mock-bookings";
 const MOCK_REVIEWS_KEY = "hairline-mock-reviews";
 const MOCK_CART_KEY = "hairline-mock-cart";
-const MIN_PASSWORD_LENGTH = 6;
+const MIN_PASSWORD_LENGTH = 8;
 const MAX_PASSWORD_LENGTH = 20;
 const PASSWORD_REGEX = /^[A-Za-z0-9]+$/;
+const NAME_REGEX = /^[A-Za-zА-Яа-яЁё\s'-]+$/;
+const MIN_NAME_LENGTH = 2;
+const MAX_NAME_LENGTH = 120;
 const MAX_REVIEW_COMMENT_LENGTH = 100;
 const MOCK_SLOT_TIMES = [
   "10:00",
@@ -393,13 +396,15 @@ const mockApi = {
   register: async (body: RegisterRequest): Promise<RegisterResponse> => {
     await wait();
     const users = loadMockUsers();
-    const fullName = body.fullName.trim();
+    const fullName = String(body.fullName || '').trim();
     const phone = body.phone.trim();
     const passwordLength = body.password.length;
 
     if (
-      fullName.length < 2 ||
-      fullName.length > 120 ||
+      !NAME_REGEX.test(fullName) ||
+      !/[A-Za-zА-Яа-яЁё]/.test(fullName) ||
+      fullName.length < MIN_NAME_LENGTH ||
+      fullName.length > MAX_NAME_LENGTH ||
       !isValidPhoneNumber(phone) ||
       passwordLength < MIN_PASSWORD_LENGTH ||
       passwordLength > MAX_PASSWORD_LENGTH ||
@@ -598,7 +603,12 @@ const mockApi = {
 
     if (typeof body.fullName !== "undefined") {
       const fullName = body.fullName.trim();
-      if (fullName.length < 2 || fullName.length > 120) {
+      if (
+        !NAME_REGEX.test(fullName) ||
+        !/[A-Za-zА-Яа-яЁё]/.test(fullName) ||
+        fullName.length < MIN_NAME_LENGTH ||
+        fullName.length > MAX_NAME_LENGTH
+      ) {
         throw new ApiError("Invalid payload", 400);
       }
     }
