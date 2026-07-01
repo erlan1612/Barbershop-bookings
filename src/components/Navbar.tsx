@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ShoppingCart, User, Globe } from "lucide-react";
+import { ShoppingCart, User, Globe, Sun, Moon } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { useCart } from "@/lib/cart";
@@ -10,7 +10,7 @@ const Navbar = () => {
   const [badgePulse, setBadgePulse] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const location = useLocation();
-  const { tr, lang, setLang } = useI18n();
+  const { tr, lang, setLang, theme, setTheme } = useI18n();
   const { isAuthenticated } = useAuth();
   const { totalItems } = useCart();
   const previousTotal = useRef(totalItems);
@@ -93,6 +93,19 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Theme toggle - visible on all screens */}
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="flex items-center gap-1.5 rounded-lg border border-border/50 bg-background/80 backdrop-blur-sm px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition-all hover:text-foreground hover:border-border md:flex"
+            aria-label={tr("profile.settings.theme.light")}
+          >
+            {theme === "dark" ? (
+              <Sun className="h-3.5 w-3.5" />
+            ) : (
+              <Moon className="h-3.5 w-3.5" />
+            )}
+          </button>
+
           {/* Language switcher - visible on all screens */}
           <div ref={langRef} className="relative">
             <button
