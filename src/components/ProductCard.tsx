@@ -15,20 +15,20 @@ const ProductCard = ({ product, onProductClick }: { product: Product; onProductC
       whileHover={{ y: -2 }}
       transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
       onClick={handleCardClick}
-      className="group surface-card overflow-hidden card-shadow transition-shadow duration-200 hover:card-shadow-hover cursor-pointer"
+       className="group surface-card overflow-hidden card-shadow transition-shadow duration-200 hover:card-shadow-hover cursor-pointer h-full"
     >
-       <div className="h-32 rounded-lg md:aspect-[4/5] overflow-hidden bg-secondary">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          loading="lazy"
-        />
-      </div>
-      <div className="p-2 sm:p-4 md:p-5">
-        <p className="text-xs text-muted-foreground">{tv("productType", product.type)}</p>
-        <h3 className="mt-1 line-clamp-2 text-sm sm:text-sm font-medium tracking-tight sm:min-h-[2.5rem]">{product.name}</h3>
-        <div className="mt-3 flex items-center justify-between gap-3">
+       <div className="h-32 overflow-hidden rounded-lg bg-secondary">
+         <img
+           src={product.image}
+           alt={product.name}
+           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+           loading="lazy"
+         />
+       </div>
+       <div className="p-2">
+         <p className="text-xs text-muted-foreground">{tv("productType", product.type)}</p>
+         <h3 className="line-clamp-2 text-sm font-medium tracking-tight">{product.name}</h3>
+         <div className="mt-2 flex items-center justify-between gap-3">
           <span className="tabular text-sm sm:text-sm font-medium">{price(product.price)}</span>
           <div onClick={(e) => e.stopPropagation()}>
             <AddToCartButton

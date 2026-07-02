@@ -110,15 +110,16 @@ const Masters = () => {
           </div>
         </div>
 
-        <div className="mt-8">
-          {isLoading && masters.length === 0 && (
-             <div className="flex gap-3 overflow-x-auto px-3 pb-4 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 md:overflow-visible md:pb-0">
-              {Array.from({ length: 8 }).map((_, index) => (
-                <div
-                  key={`masters-skeleton-${index}`}
-                  className="h-[280px] min-w-[144px] flex-shrink-0 animate-pulse rounded-2xl bg-secondary/60"
-                />
-              ))}
+         <div className="mt-8">
+          <div className="mx-auto max-w-[1550px] px-4 sm:px-6 lg:px-8 xl:px-10">
+            {isLoading && masters.length === 0 && (
+              <div className="flex gap-3 md:gap-5 overflow-x-auto pb-4 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:overflow-visible md:pb-0">
+               {Array.from({ length: 8 }).map((_, index) => (
+                 <div
+                   key={`masters-skeleton-${index}`}
+                   className="h-[280px] xl:h-[440px] min-w-[144px] md:min-w-0 flex-shrink-0 animate-pulse rounded-2xl bg-secondary/60"
+                 />
+               ))}
             </div>
           )}
 
@@ -163,7 +164,7 @@ const Masters = () => {
 
               <div
                 ref={mastersScrollRef}
-                className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-3 pb-4 scroll-smooth md:grid md:grid-cols-2 md:overflow-visible md:pb-0 lg:grid-cols-3 xl:grid-cols-3"
+                className="flex snap-x snap-mandatory gap-3 md:gap-5 overflow-x-auto pb-4 scroll-smooth md:grid md:grid-cols-2 md:overflow-visible md:pb-0 lg:grid-cols-3 xl:grid-cols-[repeat(4,minmax(300px,1fr))]"
               >
                 {filtered.map((master, index) => (
                   <motion.div
@@ -171,7 +172,7 @@ const Masters = () => {
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.04, duration: 0.25 }}
-                    className="w-[75%] max-w-[220px] snap-start shrink-0 md:min-w-0 md:w-auto"
+                     className="w-[75%] max-w-[220px] snap-start shrink-0 md:min-w-0 md:w-auto h-full xl:min-w-[300px]"
                   >
                     <MasterCard master={master} />
                   </motion.div>
@@ -180,6 +181,7 @@ const Masters = () => {
             </div>
           )}
         </div>
+      </div>
       </div>
     </div>
   );
