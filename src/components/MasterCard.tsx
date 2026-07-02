@@ -33,10 +33,11 @@ const MasterCard = ({ master }: { master: Master }) => {
               <Link to={`/masters/${master.id}`} className="hover:underline">
                 <h3 className="text-base sm:text-lg font-medium tracking-tight">{master.name}</h3>
               </Link>
-                <p className="mt-3 xl:mt-4 text-xs sm:text-sm text-muted-foreground">
-                {tv("role", master.role)} - {formatYears(master.experience)}
-              </p>
-                <p className="line-clamp-1 mt-2 xl:mt-3 text-xs text-muted-foreground leading-relaxed">
+              <div className="mt-3 xl:mt-4 text-xs sm:text-sm text-muted-foreground">
+                <p>{tv("role", master.role)}</p>
+                <p>{formatYears(master.experience)}</p>
+              </div>
+              <p className="line-clamp-1 mt-2 xl:mt-3 text-xs text-muted-foreground leading-relaxed">
                 {master.salonName || tr("masters.unassignedSalon")}
               </p>
             </div>
