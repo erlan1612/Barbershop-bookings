@@ -10,6 +10,7 @@ import { useAuth } from "@/lib/auth";
 import { toast } from "@/hooks/use-toast";
 import { ApiError, api } from "@/lib/api";
 import { mapApiReviewsToMasterReviews } from "@/lib/masters";
+import { formatYears } from "@/utils/formatYears";
 
 const MIN_REVIEW_LENGTH = 5;
 const MAX_REVIEW_LENGTH = 100;
@@ -22,7 +23,7 @@ const MasterDetail = () => {
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState("");
-  const { tr, tv, formatDate, formatYears } = useI18n();
+  const { tr, tv, formatDate } = useI18n();
   const { token, isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
 

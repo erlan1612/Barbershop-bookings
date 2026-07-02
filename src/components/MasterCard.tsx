@@ -5,10 +5,11 @@ import { Link } from "react-router-dom";
 import type { Master } from "@/data/masters";
 import BookingDialog from "@/components/BookingDialog";
 import { useI18n } from "@/lib/i18n";
+import { formatYears } from "@/utils/formatYears";
 
 const MasterCard = ({ master }: { master: Master }) => {
   const [bookingOpen, setBookingOpen] = useState(false);
-  const { tr, tv, formatYears } = useI18n();
+  const { tr, tv} = useI18n();
 
   return (
     <>
@@ -35,7 +36,7 @@ const MasterCard = ({ master }: { master: Master }) => {
               </Link>
               <div className="mt-3 xl:mt-4 text-xs sm:text-sm text-muted-foreground">
                 <p>{tv("role", master.role)}</p>
-                <p>{formatYears(master.experience)}</p>
+                <p>Стаж: {formatYears(master.experience)}</p>
               </div>
               <p className="line-clamp-1 mt-2 xl:mt-3 text-xs text-muted-foreground leading-relaxed">
                 {master.salonName || tr("masters.unassignedSalon")}

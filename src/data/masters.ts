@@ -21,7 +21,7 @@ export interface Master {
   id: string;
   name: string;
   role: string;
-  experience: string;
+  experience: number;
   rating: number;
   reviews: number;
   image: string;
@@ -42,7 +42,7 @@ export const masters: Master[] = [
     id: "1",
     name: "Azamat Jusupov",
     role: "Barber",
-    experience: "8 years",
+    experience: 8,
     rating: 4.9,
     reviews: 342,
     image: master1,
@@ -64,7 +64,7 @@ export const masters: Master[] = [
     id: "2",
     name: "Aigul Satybaldieva",
     role: "Stylist",
-    experience: "12 years",
+    experience: 12,
     rating: 5.0,
     reviews: 518,
     image: master2,
@@ -86,7 +86,7 @@ export const masters: Master[] = [
     id: "3",
     name: "Daniyar Kasymov",
     role: "Barber",
-    experience: "5 years",
+    experience: 5,
     rating: 4.8,
     reviews: 189,
     image: master3,
@@ -107,7 +107,7 @@ export const masters: Master[] = [
     id: "4",
     name: "Elnura Toktosunova",
     role: "Colorist",
-    experience: "10 years",
+    experience: 10,
     rating: 4.9,
     reviews: 427,
     image: master4,

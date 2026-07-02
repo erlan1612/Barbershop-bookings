@@ -27,13 +27,9 @@ const fallbackDictionary = dictionaries.en;
 function getInitialLang(): Lang {
   const saved = localStorage.getItem("hairline-lang") as Lang | "kg" | null;
   if (saved === "kg") return "ky";
-  if (saved === "ky" || saved === "ru" || saved === "en") {
-    return saved;
-  }
+  if (saved === "ky" || saved === "ru" || saved === "en") return saved;
 
-  if (typeof navigator === "undefined") {
-    return "en";
-  }
+  if (typeof navigator === "undefined") return "en";
 
   const browser = navigator.language.toLowerCase();
   if (browser.startsWith("ru")) return "ru";
@@ -85,7 +81,8 @@ if (import.meta.env.DEV) {
 function getInitialTheme(): Theme {
   const saved = localStorage.getItem("hairline-theme") as Theme | null;
   if (saved === "dark" || saved === "light") return saved;
-  if (typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches) return "dark";
+  if (typeof window !== "undefined" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches) return "dark";
   return "light";
 }
 
@@ -96,7 +93,6 @@ interface I18nContextType {
   tv: (group: ValueGroup, value: string) => string;
   price: (amount: number) => string;
   formatDate: (date: Date, options?: Intl.DateTimeFormatOptions) => string;
-  formatYears: (value: number | string) => string;
   theme: Theme;
   setTheme: (theme: Theme) => void;
 }
@@ -163,22 +159,6 @@ export const I18nProvider = ({ children }: { children: ReactNode }) => {
     [lang],
   );
 
-  const formatYears = useCallback(
-    (value: number | string) => {
-      const numeric =
-        typeof value === "number"
-          ? value
-          : Number.parseInt(String(value).replace(/[^\d]/g, ""), 10);
-
-      if (Number.isNaN(numeric)) {
-        return String(value);
-      }
-
-      return `${numeric} ${tr("common.years")}`;
-    },
-    [tr],
-  );
-
   const contextValue = useMemo<I18nContextType>(
     () => ({
       lang,
@@ -187,14 +167,17 @@ export const I18nProvider = ({ children }: { children: ReactNode }) => {
       tv,
       price,
       formatDate,
-      formatYears,
       theme,
       setTheme,
     }),
-    [lang, changeLang, tr, tv, price, formatDate, formatYears, theme, setTheme],
+    [lang, changeLang, tr, tv, price, formatDate, theme, setTheme],
   );
 
-  return <I18nContext.Provider value={contextValue}>{children}</I18nContext.Provider>;
+  return (
+    <I18nContext.Provider value={contextValue}>
+      {children}
+    </I18nContext.Provider>
+  );
 };
 
 export const useI18n = () => {

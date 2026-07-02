@@ -74,7 +74,7 @@ export function mapBarbersToMasters(barbers: ApiBarber[]): Master[] {
       id: String(barber.id),
       name: barber.name,
       role,
-      experience: `${years} years`,
+      experience: years,
       rating: Number(rating),
       reviews: Number(reviews),
       specialties,
