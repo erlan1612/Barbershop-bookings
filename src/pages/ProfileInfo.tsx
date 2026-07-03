@@ -14,10 +14,10 @@ const ProfileInfo = () => {
     <div className="space-y-6">
       <div className="rounded-lg border border-border bg-surface p-4">
         <p className="text-2xl font-semibold sm:text-3xl text-foreground">
-          Добро пожаловать в ваш профиль.
+          {tr("profile.welcome")}
         </p>
         <p className="mt-1 text-sm text-muted-foreground sm:text-base">
-          Здесь вы можете просматривать и обновлять свою основную личную информацию.
+          {tr("profile.welcome.description")}
         </p>
       </div>
 

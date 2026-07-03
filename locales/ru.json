@@ -172,6 +172,8 @@
   "profile.dashboard.title": "Мой профиль",
   "profile.dashboard.subtitle": "Управляйте персональной информацией, записями и бронированиями.",
   "profile.guest.title": "Профиль",
+  "profile.welcome": "Добро пожаловать в ваш профиль.",
+  "profile.welcome.description": "Здесь вы можете просматривать и обновлять свою основную личную информацию.",
   "profile.guest.desc": "Войдите, чтобы открыть профиль и записи.",
   "profile.logout.confirm.title": "Подтвердить выход?",
   "profile.logout.confirm.desc": "Вы уверены, что хотите выйти из аккаунта?",

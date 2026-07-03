@@ -172,6 +172,8 @@
   "profile.dashboard.title": "Менин профилем",
   "profile.dashboard.subtitle": "Жеке маалыматтарды, жазылууларды жана брондоолорду башкаруу.",
   "profile.guest.title": "Профиль",
+  "profile.welcome": "Профилиңизге кош келиңиз.",
+  "profile.welcome.description": "Бул жерде сиз өзүнүн негизги жеке маалыматыңызды көрүп жана жаңырта аласыз.",
   "profile.guest.desc": "Профилди жана жазылууларды көрүү үчүн кириңиз.",
   "profile.logout.confirm.title": "Чыгууну ырастайсызбы?",
   "profile.logout.confirm.desc": "Аккаунттан чыгууну каалайсызбы?",
