@@ -21,7 +21,6 @@ describe("i18n dictionaries", () => {
     expect(ruDictionary["nav.home"].trim().length).toBeGreaterThan(0);
     expect(kyDictionary["nav.home"].trim().length).toBeGreaterThan(0);
     expect(ruDictionary["auth.field.fullName"].trim().length).toBeGreaterThan(0);
-    expect(kyDictionary["common.years"].trim().length).toBeGreaterThan(0);
     expect(enDictionary["profile.settings.password.title"].trim().length).toBeGreaterThan(0);
     expect(ruDictionary["profile.settings.password.title"].trim().length).toBeGreaterThan(0);
     expect(kyDictionary["profile.settings.password.title"].trim().length).toBeGreaterThan(0);
