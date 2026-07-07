@@ -20,6 +20,12 @@ const Profile = lazy(() => import("./pages/Profile"));
 const ProfileInfo = lazy(() => import("./pages/ProfileInfo"));
 const ProfileOrders = lazy(() => import("./pages/ProfileOrders"));
 const ProfileSettings = lazy(() => import("./pages/ProfileSettings"));
+const BarberDashboard = lazy(() => import("./pages/barber/dashboard"));
+const BarberAppointments = lazy(() => import("./pages/barber/appointments"));
+const BarberClients = lazy(() => import("./pages/barber/clients"));
+const BarberSchedule = lazy(() => import("./pages/barber/schedule"));
+const BarberSettings = lazy(() => import("./pages/barber/settings"));
+const BarberServices = lazy(() => import("./pages/barber/services"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -53,6 +59,12 @@ const App = () => (
                       <Route path="records" element={<Navigate to="/profile/orders" replace />} />
                       <Route path="settings" element={<ProfileSettings />} />
                     </Route>
+                    <Route path="/barber/dashboard" element={<BarberDashboard />} />
+                    <Route path="/barber/appointments" element={<BarberAppointments />} />
+                    <Route path="/barber/clients" element={<BarberClients />} />
+                    <Route path="/barber/services" element={<BarberServices />} />
+                    <Route path="/barber/schedule" element={<BarberSchedule />} />
+                    <Route path="/barber/settings" element={<BarberSettings />} />
                   </Route>
                   <Route path="*" element={<NotFound />} />
                 </Routes>
